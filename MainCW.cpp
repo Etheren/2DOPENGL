@@ -39,6 +39,26 @@ static GLubyte skyColours[] = {
 	51,255,255,
 };
 
+static GLfloat houseVertices[] = {
+	-0.8f, -0.8f,
+	0.1f, -0.8f,
+	0.1f, 0.4f,
+	-0.35f, 0.5f,
+	-0.8f, 0.4f,
+
+};
+
+static GLubyte houseColours[] = {
+	51, 25, 0,
+	51, 25, 0,
+	51, 25, 0,
+	153, 0, 0,
+	51, 25, 0,
+
+
+
+};
+
 
 
 // Function Prototypes
@@ -117,7 +137,7 @@ void init(int argc, char* argv[]) {
 	glLineWidth(4.0f);
 
 	// Load demo texture...
-	myTexture = fiLoadTexture("..\\..\\Common\\Resources\\Textures\\bumblebee.png");
+	myTexture = fiLoadTexture("..\\Common\\Resources\\Textures\\bumblebee.png");
 
 
 	// Enable Vertex Arrays
@@ -151,6 +171,7 @@ void display(void) {
 
 	drawGround();
 	drawSky();
+	drawHouse();
 
 	glutSwapBuffers();
 }
@@ -171,4 +192,10 @@ void drawSky(void){
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, skyColours);
 
 	glDrawArrays(GL_QUADS, 0, 4);
+}
+void drawHouse(void){
+	glVertexPointer(2, GL_FLOAT, 0, houseVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, houseColours);
+
+	glDrawArrays(GL_POLYGON, 0, 5);
 }
