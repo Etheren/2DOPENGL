@@ -43,7 +43,7 @@ static GLfloat houseVertices[] = {
 	-0.8f, -0.8f,
 	0.1f, -0.8f,
 	0.1f, 0.4f,
-	-0.35f, 0.5f,
+	-0.35f, 0.7f,
 	-0.8f, 0.4f,
 
 };
@@ -54,8 +54,36 @@ static GLubyte houseColours[] = {
 	51, 25, 0,
 	153, 0, 0,
 	51, 25, 0,
+};
 
+static GLfloat windowOneVertices[] = {
+	-0.7f, -0.6f,
+	-0.4f, -0.6f,
+	-0.4f, -0.2f,
+	-0.7f, -0.2f,
+	// Windows are 3 "units" wide and 4 "units" tall
+};
+//Add more window vertices here
+static GLfloat windowTwoVertices[] = {
+	-0.7f, -0.05f,
+	-0.4f, -0.05f,
+	-0.4f, 0.35f,
+	-0.7f, 0.35f,
+};
 
+static GLfloat windowThreeVertices[] = {
+	-0.3f, -0.05f,
+	-0.0f, -0.05f,
+	-0.0f, 0.35f,
+	-0.3f, 0.35f,
+
+};
+
+static GLubyte windowColors[] = {
+	64,64,64,
+	64,64,64,
+	64,64,64,
+	64,64,64,
 
 };
 
@@ -69,6 +97,7 @@ void display(void);
 void drawGround(void);
 void drawSky(void);
 void drawHouse(void);
+
 
 
 
@@ -148,7 +177,7 @@ void init(int argc, char* argv[]) {
 	// Tell OpenGL to expect vertex colour information from an array
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	// Tell OpenGL to expect texture coordinate information from an array
+	// Tell OpenGL to expect texture coordinate information from an array. Remove comments if needed.
 	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
@@ -196,6 +225,18 @@ void drawSky(void){
 void drawHouse(void){
 	glVertexPointer(2, GL_FLOAT, 0, houseVertices);
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, houseColours);
-
 	glDrawArrays(GL_POLYGON, 0, 5);
+
+	glVertexPointer(2, GL_FLOAT, 0, windowOneVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	glDrawArrays(GL_POLYGON, 0, 4);
+	
+	glVertexPointer(2, GL_FLOAT, 0, windowTwoVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	glDrawArrays(GL_POLYGON, 0, 4);
+
+	glVertexPointer(2, GL_FLOAT, 0, windowThreeVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	glDrawArrays(GL_POLYGON, 0, 4);
+
 }
