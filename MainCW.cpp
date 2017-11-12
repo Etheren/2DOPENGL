@@ -55,15 +55,37 @@ static GLubyte houseColours[] = {
 	153, 0, 0,
 	51, 25, 0,
 };
-
+// Windows are 3 "units" wide and 4 "units" tall
 static GLfloat windowOneVertices[] = {
 	-0.7f, -0.6f,
 	-0.4f, -0.6f,
 	-0.4f, -0.2f,
 	-0.7f, -0.2f,
-	// Windows are 3 "units" wide and 4 "units" tall
+	
 };
-//Add more window vertices here
+
+static GLfloat windowOnePaneVertices[] = {
+	-0.675f, -0.55f,
+	-0.575f, -0.55f,
+	-0.575f, -0.42f,
+	-0.675f, -0.42f,
+
+	-0.53f, -0.55f,
+	-0.43f, -0.55f,
+	-0.43f, -0.42f,
+	-0.53f, -0.42f,
+
+	-0.675f, -0.38f,
+	-0.575f, -0.38f,
+	-0.575f, -0.25f,
+	-0.675f, -0.25f,
+
+	-0.53f, -0.38f,
+	-0.43f, -0.38f,
+	-0.43f, -0.25f,
+	-0.53f, -0.25f,
+};
+
 static GLfloat windowTwoVertices[] = {
 	-0.7f, -0.05f,
 	-0.4f, -0.05f,
@@ -76,7 +98,6 @@ static GLfloat windowThreeVertices[] = {
 	-0.0f, -0.05f,
 	-0.0f, 0.35f,
 	-0.3f, 0.35f,
-
 };
 
 static GLubyte windowColors[] = {
@@ -84,6 +105,39 @@ static GLubyte windowColors[] = {
 	64,64,64,
 	64,64,64,
 	64,64,64,
+};
+
+static GLubyte windowpaneColors[] = {
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+};
+
+static GLfloat doorVertices[] = {
+	-0.3f, -0.8f,
+	-0.0f, -0.8f,
+	-0.0f, -0.2f,
+	-0.3f, -0.2f
+};
+
+static GLubyte doorColors[] = {
+	255,225,255,
+	255,225,255,
+	255,225,255,
+	255,225,255,
 
 };
 
@@ -97,6 +151,7 @@ void display(void);
 void drawGround(void);
 void drawSky(void);
 void drawHouse(void);
+void drawWindowPanes(void);
 
 
 
@@ -201,6 +256,7 @@ void display(void) {
 	drawGround();
 	drawSky();
 	drawHouse();
+	drawWindowPanes();
 
 	glutSwapBuffers();
 }
@@ -239,4 +295,15 @@ void drawHouse(void){
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
 	glDrawArrays(GL_POLYGON, 0, 4);
 
+	glVertexPointer(2, GL_FLOAT, 0, doorVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, doorColors);
+	glDrawArrays(GL_POLYGON, 0, 4);
+
+}
+
+void drawWindowPanes(void)
+{
+	glVertexPointer(2, GL_FLOAT, 0, windowOnePaneVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
+	glDrawArrays(GL_QUADS, 0, 16);
 }
