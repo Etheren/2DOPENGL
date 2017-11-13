@@ -93,11 +93,55 @@ static GLfloat windowTwoVertices[] = {
 	-0.7f, 0.35f,
 };
 
+static GLfloat windowTwoPaneVertices[] = {
+	-0.675f, 0.0f,
+	-0.575f, 0.0f,
+	-0.575f, 0.13f,
+	-0.675f, 0.13f,
+
+	-0.53f, 0.0f,
+	-0.43f, 0.0f,
+	-0.43f, 0.13f,
+	-0.53f, 0.13f,
+
+	-0.675f, 0.17f,
+	-0.575f, 0.17f,
+	-0.575f, 0.3f,
+	-0.675f, 0.3f,
+
+	-0.53f, 0.17f,
+	-0.43f, 0.17f,
+	-0.43f, 0.3f,
+	-0.53f, 0.3f,
+};
+
 static GLfloat windowThreeVertices[] = {
 	-0.3f, -0.05f,
 	-0.0f, -0.05f,
 	-0.0f, 0.35f,
 	-0.3f, 0.35f,
+};
+
+static GLfloat windowThreePaneVertices[] = {
+	-0.275f, 0.0f,
+	-0.175f, 0.0f,
+	-0.175f, 0.13f,
+	-0.275f, 0.13f,
+
+	-0.13f, 0.0f,
+	-0.03f, 0.0f,
+	-0.03f, 0.13f,
+	-0.13f, 0.13f,
+
+	-0.275f, 0.17f,
+	-0.175f, 0.17f,
+	-0.175f, 0.3f,
+	-0.275f, 0.3f,
+
+	-0.13f, 0.17f,
+	-0.03f, 0.17f,
+	-0.03f, 0.3f,
+	-0.13f, 0.3f,
 };
 
 static GLubyte windowColors[] = {
@@ -141,8 +185,6 @@ static GLubyte doorColors[] = {
 
 };
 
-
-
 // Function Prototypes
 
 void init(int argc, char* argv[]);
@@ -152,9 +194,6 @@ void drawGround(void);
 void drawSky(void);
 void drawHouse(void);
 void drawWindowPanes(void);
-
-
-
 
 int _tmain(int argc, char* argv[]) {
 
@@ -167,7 +206,6 @@ int _tmain(int argc, char* argv[]) {
 
 	return 0;
 }
-
 
 void init(int argc, char* argv[]) {
 
@@ -236,7 +274,6 @@ void init(int argc, char* argv[]) {
 	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-
 void report_version(void) {
 
 	int majorVersion, minorVersion;
@@ -246,8 +283,6 @@ void report_version(void) {
 
 	cout << "OpenGL version " << majorVersion << "." << minorVersion << "\n\n";
 }
-
-
 
 void display(void) {
 
@@ -260,8 +295,6 @@ void display(void) {
 
 	glutSwapBuffers();
 }
-
-
 
 void drawGround(void) {
 
@@ -304,6 +337,14 @@ void drawHouse(void){
 void drawWindowPanes(void)
 {
 	glVertexPointer(2, GL_FLOAT, 0, windowOnePaneVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
+	glDrawArrays(GL_QUADS, 0, 16);
+
+	glVertexPointer(2, GL_FLOAT, 0, windowTwoPaneVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
+	glDrawArrays(GL_QUADS, 0, 16);
+
+	glVertexPointer(2, GL_FLOAT, 0, windowThreePaneVertices);
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
 	glDrawArrays(GL_QUADS, 0, 16);
 }
