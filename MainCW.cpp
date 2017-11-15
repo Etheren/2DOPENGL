@@ -39,7 +39,151 @@ static GLubyte skyColours[] = {
 	51,255,255,
 };
 
+static GLfloat houseVertices[] = {
+	-0.8f, -0.8f,
+	0.1f, -0.8f,
+	0.1f, 0.4f,
+	-0.35f, 0.7f,
+	-0.8f, 0.4f,
 
+};
+
+static GLubyte houseColours[] = {
+	51, 25, 0,
+	51, 25, 0,
+	51, 25, 0,
+	153, 0, 0,
+	51, 25, 0,
+};
+// Windows are 3 "units" wide and 4 "units" tall
+static GLfloat windowOneVertices[] = {
+	-0.7f, -0.6f,
+	-0.4f, -0.6f,
+	-0.4f, -0.2f,
+	-0.7f, -0.2f,
+	
+};
+
+static GLfloat windowOnePaneVertices[] = {
+	-0.675f, -0.55f,
+	-0.575f, -0.55f,
+	-0.575f, -0.42f,
+	-0.675f, -0.42f,
+
+	-0.53f, -0.55f,
+	-0.43f, -0.55f,
+	-0.43f, -0.42f,
+	-0.53f, -0.42f,
+
+	-0.675f, -0.38f,
+	-0.575f, -0.38f,
+	-0.575f, -0.25f,
+	-0.675f, -0.25f,
+
+	-0.53f, -0.38f,
+	-0.43f, -0.38f,
+	-0.43f, -0.25f,
+	-0.53f, -0.25f,
+};
+
+static GLfloat windowTwoVertices[] = {
+	-0.7f, -0.05f,
+	-0.4f, -0.05f,
+	-0.4f, 0.35f,
+	-0.7f, 0.35f,
+};
+
+static GLfloat windowTwoPaneVertices[] = {
+	-0.675f, 0.0f,
+	-0.575f, 0.0f,
+	-0.575f, 0.13f,
+	-0.675f, 0.13f,
+
+	-0.53f, 0.0f,
+	-0.43f, 0.0f,
+	-0.43f, 0.13f,
+	-0.53f, 0.13f,
+
+	-0.675f, 0.17f,
+	-0.575f, 0.17f,
+	-0.575f, 0.3f,
+	-0.675f, 0.3f,
+
+	-0.53f, 0.17f,
+	-0.43f, 0.17f,
+	-0.43f, 0.3f,
+	-0.53f, 0.3f,
+};
+
+static GLfloat windowThreeVertices[] = {
+	-0.3f, -0.05f,
+	-0.0f, -0.05f,
+	-0.0f, 0.35f,
+	-0.3f, 0.35f,
+};
+
+static GLfloat windowThreePaneVertices[] = {
+	-0.275f, 0.0f,
+	-0.175f, 0.0f,
+	-0.175f, 0.13f,
+	-0.275f, 0.13f,
+
+	-0.13f, 0.0f,
+	-0.03f, 0.0f,
+	-0.03f, 0.13f,
+	-0.13f, 0.13f,
+
+	-0.275f, 0.17f,
+	-0.175f, 0.17f,
+	-0.175f, 0.3f,
+	-0.275f, 0.3f,
+
+	-0.13f, 0.17f,
+	-0.03f, 0.17f,
+	-0.03f, 0.3f,
+	-0.13f, 0.3f,
+};
+
+static GLubyte windowColors[] = {
+	64,64,64,
+	64,64,64,
+	64,64,64,
+	64,64,64,
+};
+
+static GLubyte windowpaneColors[] = {
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+	153,255,255,
+};
+
+static GLfloat doorVertices[] = {
+	-0.3f, -0.8f,
+	-0.0f, -0.8f,
+	-0.0f, -0.2f,
+	-0.3f, -0.2f
+};
+
+static GLubyte doorColors[] = {
+	255,225,255,
+	255,225,255,
+	255,225,255,
+	255,225,255,
+
+};
 
 // Function Prototypes
 
@@ -49,8 +193,7 @@ void display(void);
 void drawGround(void);
 void drawSky(void);
 void drawHouse(void);
-
-
+void drawWindowPanes(void);
 
 int _tmain(int argc, char* argv[]) {
 
@@ -63,7 +206,6 @@ int _tmain(int argc, char* argv[]) {
 
 	return 0;
 }
-
 
 void init(int argc, char* argv[]) {
 
@@ -117,7 +259,7 @@ void init(int argc, char* argv[]) {
 	glLineWidth(4.0f);
 
 	// Load demo texture...
-	myTexture = fiLoadTexture("..\\..\\Common\\Resources\\Textures\\bumblebee.png");
+	myTexture = fiLoadTexture("..\\Common\\Resources\\Textures\\bumblebee.png");
 
 
 	// Enable Vertex Arrays
@@ -128,10 +270,9 @@ void init(int argc, char* argv[]) {
 	// Tell OpenGL to expect vertex colour information from an array
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	// Tell OpenGL to expect texture coordinate information from an array
+	// Tell OpenGL to expect texture coordinate information from an array. Remove comments if needed.
 	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
-
 
 void report_version(void) {
 
@@ -143,19 +284,17 @@ void report_version(void) {
 	cout << "OpenGL version " << majorVersion << "." << minorVersion << "\n\n";
 }
 
-
-
 void display(void) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	drawGround();
 	drawSky();
+	drawHouse();
+	drawWindowPanes();
 
 	glutSwapBuffers();
 }
-
-
 
 void drawGround(void) {
 
@@ -171,4 +310,41 @@ void drawSky(void){
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, skyColours);
 
 	glDrawArrays(GL_QUADS, 0, 4);
+}
+void drawHouse(void){
+	glVertexPointer(2, GL_FLOAT, 0, houseVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, houseColours);
+	glDrawArrays(GL_POLYGON, 0, 5);
+
+	glVertexPointer(2, GL_FLOAT, 0, windowOneVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	glDrawArrays(GL_POLYGON, 0, 4);
+	
+	glVertexPointer(2, GL_FLOAT, 0, windowTwoVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	glDrawArrays(GL_POLYGON, 0, 4);
+
+	glVertexPointer(2, GL_FLOAT, 0, windowThreeVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	glDrawArrays(GL_POLYGON, 0, 4);
+
+	glVertexPointer(2, GL_FLOAT, 0, doorVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, doorColors);
+	glDrawArrays(GL_POLYGON, 0, 4);
+
+}
+
+void drawWindowPanes(void)
+{
+	glVertexPointer(2, GL_FLOAT, 0, windowOnePaneVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
+	glDrawArrays(GL_QUADS, 0, 16);
+
+	glVertexPointer(2, GL_FLOAT, 0, windowTwoPaneVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
+	glDrawArrays(GL_QUADS, 0, 16);
+
+	glVertexPointer(2, GL_FLOAT, 0, windowThreePaneVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
+	glDrawArrays(GL_QUADS, 0, 16);
 }
