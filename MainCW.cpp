@@ -3,21 +3,29 @@
 #include <freeglut\freeglut.h>
 #include <CoreStructures\CoreStructures.h>
 #include "texture_loader.h"
+#include "shader_setup.h"
 
 
 using namespace std;
 using namespace CoreStructures;
 
+GLuint locT;
+
+GLuint shaderProgram;
+GLuint shaderProgramNoTex;
 
 // Textures
-GLuint myTexture = 0;
+GLuint myTextureOne = 0;
+GLuint myTextureTwo = 1;
+GLuint blankTex = 2;
 
-//Ground Arrays
+//Ground Arrays, Ground, Sky House, Window, Window Panes, Path,
 static GLfloat groundVertices[] = {
 	-1.0f, -1.0f,
 	1.0f, -1.0f,
 	1.0f, -0.4f,
 	-1.0f, -0.4f,
+
 };
 static GLubyte groundColors[] = {
 	0,153,0,
@@ -38,16 +46,14 @@ static GLubyte skyColours[] = {
 	51,255,255,
 	51,255,255,
 };
-
+// House Arrays
 static GLfloat houseVertices[] = {
 	-0.8f, -0.8f,
 	0.1f, -0.8f,
 	0.1f, 0.4f,
 	-0.35f, 0.7f,
 	-0.8f, 0.4f,
-
 };
-
 static GLubyte houseColours[] = {
 	51, 25, 0,
 	51, 25, 0,
@@ -55,13 +61,20 @@ static GLubyte houseColours[] = {
 	153, 0, 0,
 	51, 25, 0,
 };
+static GLfloat houseTexture[] = {
+	-1.0f, -1.0f,
+	1.0f, -1.0f,
+	1.0f, 1.0f,
+	-1.0f, 1.0f
+};
+static GLubyte houseVertexIndices[] = { 0, 1, 2, 4, 4, 2, 3 };
+
 // Windows are 3 "units" wide and 4 "units" tall
 static GLfloat windowOneVertices[] = {
 	-0.7f, -0.6f,
 	-0.4f, -0.6f,
 	-0.4f, -0.2f,
 	-0.7f, -0.2f,
-	
 };
 
 static GLfloat windowOnePaneVertices[] = {
@@ -178,10 +191,42 @@ static GLfloat doorVertices[] = {
 };
 
 static GLubyte doorColors[] = {
-	255,225,255,
-	255,225,255,
-	255,225,255,
-	255,225,255,
+	255, 225, 255,
+	255, 225, 255,
+	255, 225, 255,
+	255, 225, 255
+};
+
+static GLfloat pathVertices[] = {
+	-0.3f, -1.0f,
+	-0.0f, -1.0f,
+	-0.0f, -0.8f,
+	-0.3f, -0.8f
+};
+static GLubyte pathColors[] = {
+	255, 178, 102,
+	255, 178, 102,
+	255, 178, 102,
+	255, 178, 102,
+};
+static GLfloat pathTexture[] = {
+	-1.0f, -1.0f,
+	1.0f, -1.0f,
+	1.0f, 1.0f,
+	-1.0f, 1.0f
+};
+static GLfloat treeTrunkVertices[] = {
+	0.4f, -0.6f,
+	0.6f, -0.6f,
+	0.6f, 0.0f,
+	0.4f, 0.0f,
+};
+
+static GLubyte treeTrunkColors[] = {
+	51, 25, 0,
+	51, 25, 0,
+	51, 25, 0,
+	51, 25, 0,
 
 };
 
@@ -194,6 +239,7 @@ void drawGround(void);
 void drawSky(void);
 void drawHouse(void);
 void drawWindowPanes(void);
+void drawTree(void);
 
 int _tmain(int argc, char* argv[]) {
 
@@ -258,9 +304,11 @@ void init(int argc, char* argv[]) {
 
 	glLineWidth(4.0f);
 
-	// Load demo texture...
-	myTexture = fiLoadTexture("..\\Common\\Resources\\Textures\\bumblebee.png");
+	// Load textures
+	myTextureOne = fiLoadTexture("..\\Common\\Resources\\Textures\\gravel.jpg");
+	myTextureTwo = fiLoadTexture("..\\Common\\Resources\\Textures\\bricks.jpg");
 
+	shaderProgram = setupShaders(string("Shaders\\basic_vertex_shader.txt"), string("Shaders\\basic_fragment_shader.txt"));
 
 	// Enable Vertex Arrays
 
@@ -292,6 +340,7 @@ void display(void) {
 	drawSky();
 	drawHouse();
 	drawWindowPanes();
+	drawTree();
 
 	glutSwapBuffers();
 }
@@ -300,8 +349,12 @@ void drawGround(void) {
 
 	glVertexPointer(2, GL_FLOAT, 0, groundVertices);
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, groundColors);
-	//glTexCoordPointer(2, GL_FLOAT, 0, starTextureCoords);
 
+
+	glDrawArrays(GL_QUADS, 0, 4);
+
+	glVertexPointer(2, GL_FLOAT, 0, pathVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, pathColors);
 	glDrawArrays(GL_QUADS, 0, 4);
 }
 void drawSky(void){
@@ -314,6 +367,7 @@ void drawSky(void){
 void drawHouse(void){
 	glVertexPointer(2, GL_FLOAT, 0, houseVertices);
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, houseColours);
+	//glTexCoordPointer(2, GL_FLOAT, 0, houseTexture);
 	glDrawArrays(GL_POLYGON, 0, 5);
 
 	glVertexPointer(2, GL_FLOAT, 0, windowOneVertices);
@@ -347,4 +401,11 @@ void drawWindowPanes(void)
 	glVertexPointer(2, GL_FLOAT, 0, windowThreePaneVertices);
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
 	glDrawArrays(GL_QUADS, 0, 16);
+}
+
+void drawTree(void)
+{
+	glVertexPointer(2, GL_FLOAT, 0, treeTrunkVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, treeTrunkColors);
+	glDrawArrays(GL_QUADS, 0, 4);
 }
