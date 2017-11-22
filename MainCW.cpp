@@ -46,6 +46,18 @@ static GLubyte skyColours[] = {
 	51,255,255,
 	51,255,255,
 };
+static GLubyte pathColors[] = {
+	255, 178, 102,
+	255, 178, 102,
+	255, 178, 102,
+	255, 178, 102,
+};
+static GLfloat pathTexture[] = {
+	-1.0f, -1.0f,
+	1.0f, -1.0f,
+	1.0f, 1.0f,
+	-1.0f, 1.0f
+};
 // House Arrays
 static GLfloat houseVertices[] = {
 	-0.8f, -0.8f,
@@ -203,18 +215,7 @@ static GLfloat pathVertices[] = {
 	-0.0f, -0.8f,
 	-0.3f, -0.8f
 };
-static GLubyte pathColors[] = {
-	255, 178, 102,
-	255, 178, 102,
-	255, 178, 102,
-	255, 178, 102,
-};
-static GLfloat pathTexture[] = {
-	-1.0f, -1.0f,
-	1.0f, -1.0f,
-	1.0f, 1.0f,
-	-1.0f, 1.0f
-};
+
 static GLfloat treeTrunkVertices[] = {
 	0.4f, -0.6f,
 	0.6f, -0.6f,
