@@ -77,27 +77,6 @@ static GLfloat windowOneVertices[] = {
 	-0.7f, -0.2f,
 };
 
-static GLfloat windowOnePaneVertices[] = {
-	-0.675f, -0.55f,
-	-0.575f, -0.55f,
-	-0.575f, -0.42f,
-	-0.675f, -0.42f,
-
-	-0.53f, -0.55f,
-	-0.43f, -0.55f,
-	-0.43f, -0.42f,
-	-0.53f, -0.42f,
-
-	-0.675f, -0.38f,
-	-0.575f, -0.38f,
-	-0.575f, -0.25f,
-	-0.675f, -0.25f,
-
-	-0.53f, -0.38f,
-	-0.43f, -0.38f,
-	-0.43f, -0.25f,
-	-0.53f, -0.25f,
-};
 
 static GLfloat windowTwoVertices[] = {
 	-0.7f, -0.05f,
@@ -106,27 +85,6 @@ static GLfloat windowTwoVertices[] = {
 	-0.7f, 0.35f,
 };
 
-static GLfloat windowTwoPaneVertices[] = {
-	-0.675f, 0.0f,
-	-0.575f, 0.0f,
-	-0.575f, 0.13f,
-	-0.675f, 0.13f,
-
-	-0.53f, 0.0f,
-	-0.43f, 0.0f,
-	-0.43f, 0.13f,
-	-0.53f, 0.13f,
-
-	-0.675f, 0.17f,
-	-0.575f, 0.17f,
-	-0.575f, 0.3f,
-	-0.675f, 0.3f,
-
-	-0.53f, 0.17f,
-	-0.43f, 0.17f,
-	-0.43f, 0.3f,
-	-0.53f, 0.3f,
-};
 
 static GLfloat windowThreeVertices[] = {
 	-0.3f, -0.05f,
@@ -135,27 +93,6 @@ static GLfloat windowThreeVertices[] = {
 	-0.3f, 0.35f,
 };
 
-static GLfloat windowThreePaneVertices[] = {
-	-0.275f, 0.0f,
-	-0.175f, 0.0f,
-	-0.175f, 0.13f,
-	-0.275f, 0.13f,
-
-	-0.13f, 0.0f,
-	-0.03f, 0.0f,
-	-0.03f, 0.13f,
-	-0.13f, 0.13f,
-
-	-0.275f, 0.17f,
-	-0.175f, 0.17f,
-	-0.175f, 0.3f,
-	-0.275f, 0.3f,
-
-	-0.13f, 0.17f,
-	-0.03f, 0.17f,
-	-0.03f, 0.3f,
-	-0.13f, 0.3f,
-};
 
 static GLubyte windowColors[] = {
 	64,64,64,
@@ -164,24 +101,6 @@ static GLubyte windowColors[] = {
 	64,64,64,
 };
 
-static GLubyte windowpaneColors[] = {
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-	153,255,255,
-};
 
 static GLfloat doorVertices[] = {
 	-0.3f, -0.8f,
@@ -238,7 +157,6 @@ void display(void);
 void drawGround(void);
 void drawSky(void);
 void drawHouse(void);
-void drawWindowPanes(void);
 void drawTree(void);
 
 int _tmain(int argc, char* argv[]) {
@@ -339,7 +257,6 @@ void display(void) {
 	drawGround();
 	drawSky();
 	drawHouse();
-	drawWindowPanes();
 	drawTree();
 
 	glutSwapBuffers();
@@ -388,20 +305,6 @@ void drawHouse(void){
 
 }
 
-void drawWindowPanes(void)
-{
-	glVertexPointer(2, GL_FLOAT, 0, windowOnePaneVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
-	glDrawArrays(GL_QUADS, 0, 16);
-
-	glVertexPointer(2, GL_FLOAT, 0, windowTwoPaneVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
-	glDrawArrays(GL_QUADS, 0, 16);
-
-	glVertexPointer(2, GL_FLOAT, 0, windowThreePaneVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowpaneColors);
-	glDrawArrays(GL_QUADS, 0, 16);
-}
 
 void drawTree(void)
 {
