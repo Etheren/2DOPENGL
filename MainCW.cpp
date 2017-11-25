@@ -15,9 +15,13 @@ GLuint shaderProgram;
 GLuint shaderProgramNoTex;
 
 // Textures
-GLuint myTextureOne = 0;
-GLuint myTextureTwo = 1;
-GLuint blankTex = 2;
+GLuint gravelTex = 0;
+GLuint roofTex = 1;
+GLuint skyTex = 2;
+GLuint groundTex = 3;
+GLuint doorTex = 4;
+GLuint windowTex = 5;
+GLuint buildingTex = 6;
 
 //Ground Arrays, Ground, Sky House, Window, Window Panes, Path,
 static GLfloat groundVertices[] = {
@@ -32,6 +36,12 @@ static GLubyte groundColors[] = {
 	0,153,0,
 	0,102,0,
 	0,102,0,
+};
+static GLfloat groundTexVertices[] = {
+	-1.0f, -1.0f,
+	-1.0f, 1.0f,
+	1.0f, 1.0f,
+	1.0f, -1.0f
 };
 //Sky Arrays
 static GLfloat skyVertices[] = {
@@ -51,14 +61,12 @@ static GLfloat houseVertices[] = {
 	-0.8f, -0.8f,
 	0.1f, -0.8f,
 	0.1f, 0.4f,
-	-0.35f, 0.7f,
 	-0.8f, 0.4f,
 };
 static GLubyte houseColours[] = {
 	51, 25, 0,
 	51, 25, 0,
 	51, 25, 0,
-	153, 0, 0,
 	51, 25, 0,
 };
 static GLfloat houseTexture[] = {
@@ -67,7 +75,10 @@ static GLfloat houseTexture[] = {
 	1.0f, 1.0f,
 	-1.0f, 1.0f
 };
-static GLubyte houseVertexIndices[] = { 0, 1, 2, 4, 4, 2, 3 };
+static GLfloat roofVertices[] = {
+	-0.35f, 0.7f,
+
+};
 
 // Windows are 3 "units" wide and 4 "units" tall
 static GLfloat windowOneVertices[] = {
@@ -223,8 +234,13 @@ void init(int argc, char* argv[]) {
 	glLineWidth(4.0f);
 
 	// Load textures
-	myTextureOne = fiLoadTexture("..\\Common\\Resources\\Textures\\gravel.jpg");
-	myTextureTwo = fiLoadTexture("..\\Common\\Resources\\Textures\\bricks.jpg");
+	gravelTex = fiLoadTexture("..\\Common\\Resources\\Textures\\gravel.jpg");
+	buildingTex = fiLoadTexture("..\\Common\\Resources\\Textures\\bricks.jpg");
+	windowTex = fiLoadTexture("..\\Common\\Resources\\Textures\\window.jpg");
+	skyTex = fiLoadTexture("..\\Common\\Resources\\Textures\\sky2.jpg");
+	groundTex = fiLoadTexture("..\\Common\\Resources\\Textures\\grass.jpg");
+	doorTex = fiLoadTexture("..\\Common\\Resources\\Textures\\door.jpg");
+	roofTex = fiLoadTexture("..\\Common\\Resources\\Textures\\roof.jpg");
 
 	shaderProgram = setupShaders(string("Shaders\\basic_vertex_shader.txt"), string("Shaders\\basic_fragment_shader.txt"));
 
@@ -237,7 +253,7 @@ void init(int argc, char* argv[]) {
 	glEnableClientState(GL_COLOR_ARRAY);
 
 	// Tell OpenGL to expect texture coordinate information from an array. Remove comments if needed.
-	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void report_version(void) {
@@ -255,60 +271,65 @@ void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	drawGround();
-	drawSky();
-	drawHouse();
-	drawTree();
+	//drawSky();
+	//drawHouse();
+	//drawTree();
 
 	glutSwapBuffers();
 }
 
 void drawGround(void) {
-
+	glEnable(GL_TEXTURE_2D);
+	
+	glBindTexture(GL_TEXTURE_2D, groundTex);
 	glVertexPointer(2, GL_FLOAT, 0, groundVertices);
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, groundColors);
-
-
+	glTexCoordPointer(2, GL_FLOAT, 0, groundTexVertices);
 	glDrawArrays(GL_QUADS, 0, 4);
 
+	glBindTexture(GL_TEXTURE_2D, gravelTex);
 	glVertexPointer(2, GL_FLOAT, 0, pathVertices);
 	glColorPointer(3, GL_UNSIGNED_BYTE, 0, pathColors);
+	glTexCoordPointer(2, GL_FLOAT, 0, pathTexture);
 	glDrawArrays(GL_QUADS, 0, 4);
+
+	glDisable(GL_TEXTURE_2D);
 }
 void drawSky(void){
 
-	glVertexPointer(2, GL_FLOAT, 0, skyVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, skyColours);
+	//glVertexPointer(2, GL_FLOAT, 0, skyVertices);
+	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, skyColours);
 
-	glDrawArrays(GL_QUADS, 0, 4);
+	//glDrawArrays(GL_QUADS, 0, 4);
 }
 void drawHouse(void){
-	glVertexPointer(2, GL_FLOAT, 0, houseVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, houseColours);
+	//glVertexPointer(2, GL_FLOAT, 0, houseVertices);
+	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, houseColours);
 	//glTexCoordPointer(2, GL_FLOAT, 0, houseTexture);
-	glDrawArrays(GL_POLYGON, 0, 5);
+	//glDrawArrays(GL_POLYGON, 0, 4);
 
-	glVertexPointer(2, GL_FLOAT, 0, windowOneVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
-	glDrawArrays(GL_POLYGON, 0, 4);
+	//glVertexPointer(2, GL_FLOAT, 0, windowOneVertices);
+	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	//glDrawArrays(GL_POLYGON, 0, 4);
 	
-	glVertexPointer(2, GL_FLOAT, 0, windowTwoVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
-	glDrawArrays(GL_POLYGON, 0, 4);
+	//glVertexPointer(2, GL_FLOAT, 0, windowTwoVertices);
+	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	//glDrawArrays(GL_POLYGON, 0, 4);
 
-	glVertexPointer(2, GL_FLOAT, 0, windowThreeVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
-	glDrawArrays(GL_POLYGON, 0, 4);
+	//glVertexPointer(2, GL_FLOAT, 0, windowThreeVertices);
+	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	//glDrawArrays(GL_POLYGON, 0, 4);
 
-	glVertexPointer(2, GL_FLOAT, 0, doorVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, doorColors);
-	glDrawArrays(GL_POLYGON, 0, 4);
+	//glVertexPointer(2, GL_FLOAT, 0, doorVertices);
+	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, doorColors);
+	//glDrawArrays(GL_POLYGON, 0, 4);
 
 }
 
 
 void drawTree(void)
 {
-	glVertexPointer(2, GL_FLOAT, 0, treeTrunkVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, treeTrunkColors);
-	glDrawArrays(GL_QUADS, 0, 4);
+	//glVertexPointer(2, GL_FLOAT, 0, treeTrunkVertices);
+	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, treeTrunkColors);
+	//glDrawArrays(GL_QUADS, 0, 4);
 }
