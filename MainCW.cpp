@@ -43,6 +43,8 @@ static GLfloat groundTexVertices[] = {
 	1.0f, 1.0f,
 	1.0f, -1.0f
 };
+
+
 //Sky Arrays
 static GLfloat skyVertices[] = {
 	1.0f,  1.0f,
@@ -56,6 +58,15 @@ static GLubyte skyColours[] = {
 	51,255,255,
 	51,255,255,
 };
+static GLfloat skyTexVertices[] = {
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f
+};
+
+
+
 // House Arrays
 static GLfloat houseVertices[] = {
 	-0.8f, -0.8f,
@@ -69,15 +80,28 @@ static GLubyte houseColours[] = {
 	51, 25, 0,
 	51, 25, 0,
 };
-static GLfloat houseTexture[] = {
-	-1.0f, -1.0f,
-	1.0f, -1.0f,
-	1.0f, 1.0f,
-	-1.0f, 1.0f
+static GLfloat houseTextureVertices[] = {
+	-2.0f, -3.0f,
+	2.0f, -3.0f,
+	2.0f, 3.0f,
+	-2.0f, 3.0f
 };
+
+
 static GLfloat roofVertices[] = {
 	-0.35f, 0.7f,
-
+	0.2f, 0.4f,
+	-0.9f, 0.4f
+};
+static GLubyte roofColors[] = {
+	255,0,0,
+	255,0,0,
+	255,0,0,
+};
+static GLfloat roofTexVertices[] = {
+	0.5f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f,
 };
 
 // Windows are 3 "units" wide and 4 "units" tall
@@ -87,24 +111,18 @@ static GLfloat windowOneVertices[] = {
 	-0.4f, -0.2f,
 	-0.7f, -0.2f,
 };
-
-
 static GLfloat windowTwoVertices[] = {
 	-0.7f, -0.05f,
 	-0.4f, -0.05f,
 	-0.4f, 0.35f,
 	-0.7f, 0.35f,
 };
-
-
 static GLfloat windowThreeVertices[] = {
 	-0.3f, -0.05f,
 	-0.0f, -0.05f,
 	-0.0f, 0.35f,
 	-0.3f, 0.35f,
 };
-
-
 static GLubyte windowColors[] = {
 	64,64,64,
 	64,64,64,
@@ -112,12 +130,19 @@ static GLubyte windowColors[] = {
 	64,64,64,
 };
 
+static GLfloat windowTexVertices[] = {
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f
+};
+
 
 static GLfloat doorVertices[] = {
-	-0.3f, -0.8f,
-	-0.0f, -0.8f,
+	-0.3f, -0.2f,
 	-0.0f, -0.2f,
-	-0.3f, -0.2f
+	-0.0f, -0.8f,
+	-0.3f, -0.8f,
 };
 
 static GLubyte doorColors[] = {
@@ -125,6 +150,12 @@ static GLubyte doorColors[] = {
 	255, 225, 255,
 	255, 225, 255,
 	255, 225, 255
+};
+static GLfloat doorTexVertices[] = {
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f
 };
 
 static GLfloat pathVertices[] = {
@@ -271,9 +302,8 @@ void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	drawGround();
-	//drawSky();
-	//drawHouse();
-	//drawTree();
+	drawSky();
+	drawHouse();
 
 	glutSwapBuffers();
 }
@@ -297,33 +327,56 @@ void drawGround(void) {
 }
 void drawSky(void){
 
-	//glVertexPointer(2, GL_FLOAT, 0, skyVertices);
-	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, skyColours);
+	glEnable(GL_TEXTURE_2D);
 
-	//glDrawArrays(GL_QUADS, 0, 4);
+	glBindTexture(GL_TEXTURE_2D, skyTex);
+	glVertexPointer(2, GL_FLOAT, 0, skyVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, skyColours);
+	glTexCoordPointer(2, GL_FLOAT, 0, skyTexVertices);
+	glDrawArrays(GL_QUADS, 0, 4);
+	
+	glDisable(GL_TEXTURE_2D);
 }
 void drawHouse(void){
-	//glVertexPointer(2, GL_FLOAT, 0, houseVertices);
-	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, houseColours);
-	//glTexCoordPointer(2, GL_FLOAT, 0, houseTexture);
-	//glDrawArrays(GL_POLYGON, 0, 4);
-
-	//glVertexPointer(2, GL_FLOAT, 0, windowOneVertices);
-	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
-	//glDrawArrays(GL_POLYGON, 0, 4);
 	
-	//glVertexPointer(2, GL_FLOAT, 0, windowTwoVertices);
-	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
-	//glDrawArrays(GL_POLYGON, 0, 4);
+	glEnable(GL_TEXTURE_2D);
 
-	//glVertexPointer(2, GL_FLOAT, 0, windowThreeVertices);
-	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
-	//glDrawArrays(GL_POLYGON, 0, 4);
+	glBindTexture(GL_TEXTURE_2D, buildingTex);
+	glVertexPointer(2, GL_FLOAT, 0, houseVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, houseColours);
+	glTexCoordPointer(2, GL_FLOAT, 0, houseTextureVertices);
+	glDrawArrays(GL_QUADS, 0, 4);
 
-	//glVertexPointer(2, GL_FLOAT, 0, doorVertices);
-	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, doorColors);
-	//glDrawArrays(GL_POLYGON, 0, 4);
+	glBindTexture(GL_TEXTURE_2D, roofTex);
+	glVertexPointer(2, GL_FLOAT, 0, roofVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, roofColors);
+	glTexCoordPointer(2, GL_FLOAT, 0, roofTexVertices);
+	glDrawArrays(GL_POLYGON, 0, 4);
 
+	glBindTexture(GL_TEXTURE_2D, windowTex);
+	glVertexPointer(2, GL_FLOAT, 0, windowOneVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	glTexCoordPointer(2, GL_FLOAT, 0, windowTexVertices);
+	glDrawArrays(GL_POLYGON, 0, 4);
+	
+	glBindTexture(GL_TEXTURE_2D, windowTex);
+	glVertexPointer(2, GL_FLOAT, 0, windowTwoVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	glTexCoordPointer(2, GL_FLOAT, 0, windowTexVertices);
+	glDrawArrays(GL_POLYGON, 0, 4);
+
+	glBindTexture(GL_TEXTURE_2D, windowTex);
+	glVertexPointer(2, GL_FLOAT, 0, windowThreeVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
+	glTexCoordPointer(2, GL_FLOAT, 0, windowTexVertices);
+	glDrawArrays(GL_POLYGON, 0, 4);
+
+	glBindTexture(GL_TEXTURE_2D, doorTex);
+	glVertexPointer(2, GL_FLOAT, 0, doorVertices);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, doorColors);
+	glDrawArrays(GL_POLYGON, 0, 4);
+	
+	glDisable(GL_TEXTURE_2D);
 }
 
 
