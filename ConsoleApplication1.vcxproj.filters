@@ -25,6 +25,12 @@
     <Text Include="Shaders\basic_vertex_shader.txt">
       <Filter>Shaders</Filter>
     </Text>
+    <Text Include="Shaders\notexture_fragment_shader.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="Shaders\notexture_vertex_shader.txt">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

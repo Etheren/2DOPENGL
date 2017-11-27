@@ -83,6 +83,8 @@
     <Text Include="ReadMe.txt" />
     <Text Include="Shaders\basic_fragment_shader.txt" />
     <Text Include="Shaders\basic_vertex_shader.txt" />
+    <Text Include="Shaders\notexture_fragment_shader.txt" />
+    <Text Include="Shaders\notexture_vertex_shader.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader_setup.h" />

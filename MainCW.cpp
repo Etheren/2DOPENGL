@@ -10,6 +10,7 @@ using namespace std;
 using namespace CoreStructures;
 
 GLuint locT;
+GLuint locT2;
 
 GLuint shaderProgram;
 GLuint shaderProgramNoTex;
@@ -32,18 +33,20 @@ static GLfloat groundVertices[] = {
 
 };
 static GLubyte groundColors[] = {
-	0,153,0,
-	0,153,0,
-	0,102,0,
-	0,102,0,
+	0,153,0, 255,
+	0,153,0, 255,
+	0,102,0, 255,
+	0,102,0, 255
 };
-static GLfloat groundTexVertices[] = {
-	-1.0f, -1.0f,
-	-1.0f, 1.0f,
+static float groundTexVertices[] = {
+	0.0f, 0.0f,
+	0.0f, 1.0f,
 	1.0f, 1.0f,
-	1.0f, -1.0f
+	1.0f, 0.0f
 };
+static GLubyte groundVertIndices[] = { 0, 1, 2, 3 };
 
+GLuint groundVerticesVBO, groundColorVBO, groundTexVerticesVBO, groundVertIndicesVBO;
 
 //Sky Arrays
 static GLfloat skyVertices[] = {
@@ -64,7 +67,7 @@ static GLfloat skyTexVertices[] = {
 	0.0f, 1.0f,
 	1.0f, 1.0f
 };
-
+GLuint skyVerticesVBO, skyColorVBO, skyTexVerticesVBO;
 
 
 // House Arrays
@@ -86,7 +89,7 @@ static GLfloat houseTextureVertices[] = {
 	2.0f, 3.0f,
 	-2.0f, 3.0f
 };
-
+GLuint houseVerticesVBO, houseColorVBO, houseTexVerticesVBO;
 
 static GLfloat roofVertices[] = {
 	-0.35f, 0.7f,
@@ -103,6 +106,7 @@ static GLfloat roofTexVertices[] = {
 	1.0f, 0.0f,
 	0.0f, 0.0f,
 };
+GLuint roofVerticesVBO, roofColorVBO, roofTexVerticesVBO;
 
 // Windows are 3 "units" wide and 4 "units" tall
 static GLfloat windowOneVertices[] = {
@@ -136,7 +140,7 @@ static GLfloat windowTexVertices[] = {
 	0.0f, 1.0f,
 	1.0f, 1.0f
 };
-
+GLuint windowOneVerticesVBO, windowTwoVerticesVBO, windowThreeVerticesVBO, windowColorVBO, windowTexVerticesVBO;
 
 static GLfloat doorVertices[] = {
 	-0.3f, -0.2f,
@@ -157,6 +161,7 @@ static GLfloat doorTexVertices[] = {
 	1.0f, 0.0f,
 	0.0f, 0.0f
 };
+GLuint doorVerticesVBO, doorColorVBO, doorTexVerticesVBO;
 
 static GLfloat pathVertices[] = {
 	-0.3f, -1.0f,
@@ -176,6 +181,8 @@ static GLfloat pathTexture[] = {
 	1.0f, 1.0f,
 	-1.0f, 1.0f
 };
+
+GLuint pathVerticesVBO, pathColorVBO, pathTexVerticesVBO;
 static GLfloat treeTrunkVertices[] = {
 	0.4f, -0.6f,
 	0.6f, -0.6f,
@@ -200,6 +207,10 @@ void drawGround(void);
 void drawSky(void);
 void drawHouse(void);
 void drawTree(void);
+void setupBackgroundVBO(void);
+void setupHouseVBO(void);
+void drawBackgroundVBO(void);
+void drawHouseVBO(void);
 
 int _tmain(int argc, char* argv[]) {
 
@@ -273,18 +284,26 @@ void init(int argc, char* argv[]) {
 	doorTex = fiLoadTexture("..\\Common\\Resources\\Textures\\door.jpg");
 	roofTex = fiLoadTexture("..\\Common\\Resources\\Textures\\roof.jpg");
 
+	//load dem shaders
 	shaderProgram = setupShaders(string("Shaders\\basic_vertex_shader.txt"), string("Shaders\\basic_fragment_shader.txt"));
+	shaderProgramNoTex = setupShaders(string("Shaders\\notexture_vertex_shader.txt"), string("Shaders\\notexture_fragment_shader.txt"));
+
+	locT = glGetUniformLocation(shaderProgram, "T");
+	locT2 = glGetUniformLocation(shaderProgramNoTex, "T2");
 
 	// Enable Vertex Arrays
 
 	// Tell OpenGL to expect vertex position information from an array
-	glEnableClientState(GL_VERTEX_ARRAY);
+	//glEnableClientState(GL_VERTEX_ARRAY);
 
 	// Tell OpenGL to expect vertex colour information from an array
-	glEnableClientState(GL_COLOR_ARRAY);
+	//glEnableClientState(GL_COLOR_ARRAY);
 
 	// Tell OpenGL to expect texture coordinate information from an array. Remove comments if needed.
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	setupBackgroundVBO();
+	//setupHouseVBO();
 }
 
 void report_version(void) {
@@ -297,13 +316,33 @@ void report_version(void) {
 	cout << "OpenGL version " << majorVersion << "." << minorVersion << "\n\n";
 }
 
+void setupBackgroundVBO(void){
+	glGenBuffers(1, &groundVerticesVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, groundVerticesVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(groundVertices), groundVertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &groundColorVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, groundColorVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(groundColors), groundColors, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &groundTexVerticesVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, groundTexVerticesVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(groundTexVertices), groundTexVertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &groundVertIndicesVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, groundVertIndicesVBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(groundVertIndices), groundVertIndices, GL_STATIC_DRAW);
+
+}
+
 void display(void) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	drawGround();
-	drawSky();
-	drawHouse();
+	//drawGround();
+	//drawSky();
+	//drawHouse();
+	drawBackgroundVBO();
 
 	glutSwapBuffers();
 }
@@ -385,4 +424,36 @@ void drawTree(void)
 	//glVertexPointer(2, GL_FLOAT, 0, treeTrunkVertices);
 	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, treeTrunkColors);
 	//glDrawArrays(GL_QUADS, 0, 4);
+}
+
+void drawBackgroundVBO(void){
+	glUseProgram(shaderProgram);
+
+	GUMatrix4 T = GUMatrix4::translationMatrix(0.0f, 0.0f, 0.0f);
+	glUniformMatrix4fv(locT, 1, GL_FALSE, (GLfloat*)&T);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, groundTex);
+	glUniform1i(glGetUniformLocation(shaderProgram, "texture"), 0);
+	glEnable(GL_TEXTURE_2D);
+
+	glBindBuffer(GL_ARRAY_BUFFER, groundVerticesVBO);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, groundColorVBO);
+	glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, (const GLvoid*)0);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, groundTexVerticesVBO);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
+	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, groundVertIndicesVBO);
+
+	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_BYTE, (GLvoid*)0);
+
+	glDisable(GL_TEXTURE_2D);
+
+
 }
