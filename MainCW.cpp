@@ -16,6 +16,9 @@ GLuint locT2;
 
 GLuint shaderProgram;
 GLuint shaderProgramNoTex;
+GLuint sunTransformation;
+
+float theta = 0.0f;
 
 // Textures
 GLuint gravelTex = 0;
@@ -25,6 +28,16 @@ GLuint groundTex = 3;
 GLuint doorTex = 4;
 GLuint windowTex = 5;
 GLuint buildingTex = 6;
+GLuint bugTex = 7;
+
+float x = 0.6, y = 0.6;
+float bugX = 0.0f, bugY = 0.0f, bugAngle =-90.0f;
+float sunAngle = 0;
+bool keyUpPressed = false;
+bool keyDownPressed = false;
+bool keyLeftPressed = false;
+bool keyRightPressed = false;
+
 
 //Ground Arrays, Ground, Sky House, Window, Window Panes, Path,
 static GLfloat groundVertices[] = {
@@ -191,33 +204,23 @@ static GLfloat pathTexVertices[] = {
 };
 static GLubyte pathVertIndices[] = { 0, 1, 2, 3 };
 GLuint pathVerticesVBO, pathColorVBO, pathTexVerticesVBO, pathVertIndicesVBO;
-static GLfloat treeTrunkVertices[] = {
-	0.4f, -0.6f,
-	0.6f, -0.6f,
-	0.6f, 0.0f,
-	0.4f, 0.0f,
-};
-
-static GLubyte treeTrunkColors[] = {
-	51, 25, 0,
-	51, 25, 0,
-	51, 25, 0,
-	51, 25, 0
-};
 
 // Function Prototypes
 
 void init(int argc, char* argv[]);
 void report_version(void);
 void display(void);
-void drawGround(void);
-void drawSky(void);
-void drawHouse(void);
-void drawTree(void);
+void drawBug(GLuint);
 void setupBackgroundVBO(void);
 void setupHouseVBO(void);
 void drawBackgroundVBO(void);
 void drawHouseVBO(void);
+void drawSun(int);
+void drawSunRotating(void);
+void update(void);
+void keyDown(unsigned char key, int x, int y);
+void specialKeyDown(int key, int x, int y);
+void specialKeyUp(int key, int x, int y);
 
 int _tmain(int argc, char* argv[]) {
 
@@ -249,6 +252,10 @@ void init(int argc, char* argv[]) {
 
 	// Register callback functions
 	glutDisplayFunc(display);
+	glutIdleFunc(update);
+	glutKeyboardFunc(keyDown);
+	glutSpecialFunc(specialKeyDown);
+	glutSpecialUpFunc(specialKeyUp);
 
 	// Initialise GLEW library
 	GLenum err = glewInit();
@@ -290,6 +297,7 @@ void init(int argc, char* argv[]) {
 	groundTex = fiLoadTexture("..\\Common\\Resources\\Textures\\grass.jpg");
 	doorTex = fiLoadTexture("..\\Common\\Resources\\Textures\\door.jpg");
 	roofTex = fiLoadTexture("..\\Common\\Resources\\Textures\\roof.jpg");
+	bugTex = fiLoadTexture("..\\Common\\Resources\\Textures\\bug.png");
 
 	//load dem shaders
 	shaderProgram = setupShaders(string("Shaders\\basic_vertex_shader.txt"), string("Shaders\\basic_fragment_shader.txt"));
@@ -298,16 +306,7 @@ void init(int argc, char* argv[]) {
 	locT = glGetUniformLocation(shaderProgram, "T");
 	locT2 = glGetUniformLocation(shaderProgramNoTex, "T2");
 
-	// Enable Vertex Arrays
-
-	// Tell OpenGL to expect vertex position information from an array
-	//glEnableClientState(GL_VERTEX_ARRAY);
-
-	// Tell OpenGL to expect vertex colour information from an array
-	//glEnableClientState(GL_COLOR_ARRAY);
-
-	// Tell OpenGL to expect texture coordinate information from an array. Remove comments if needed.
-	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	sunTransformation = glGetUniformLocation(shaderProgramNoTex, "sunTransform");
 
 	setupBackgroundVBO();
 	setupHouseVBO();
@@ -450,93 +449,99 @@ void setupHouseVBO(void){
 void display(void) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//drawGround();
-	//drawSky();
-	//drawHouse();
+	glLoadIdentity();
 	drawBackgroundVBO();
+	glLoadIdentity();
 	drawHouseVBO();
+	glLoadIdentity();
+	drawSunRotating();
+	
+	
+	glLoadIdentity();
+	glTranslatef(bugX, bugY, 0.0f);
+	glRotatef(bugAngle, 0.0f, 0.0f, 1.0f);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	drawBug(bugTex);
+	glDisable(GL_BLEND);
+
+
 
 	glutSwapBuffers();
 }
 
-void drawGroundArray(void) {
-	glEnable(GL_TEXTURE_2D);
-	
-	glBindTexture(GL_TEXTURE_2D, groundTex);
-	glVertexPointer(2, GL_FLOAT, 0, groundVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, groundColors);
-	glTexCoordPointer(2, GL_FLOAT, 0, groundTexVertices);
-	glDrawArrays(GL_QUADS, 0, 4);
-
-	glBindTexture(GL_TEXTURE_2D, gravelTex);
-	glVertexPointer(2, GL_FLOAT, 0, pathVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, pathColors);
-	glTexCoordPointer(2, GL_FLOAT, 0, pathTexVertices);
-	glDrawArrays(GL_QUADS, 0, 4);
-
-	glDisable(GL_TEXTURE_2D);
-}
-void drawSky(void){
-
-	glEnable(GL_TEXTURE_2D);
-
-	glBindTexture(GL_TEXTURE_2D, skyTex);
-	glVertexPointer(2, GL_FLOAT, 0, skyVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, skyColors);
-	glTexCoordPointer(2, GL_FLOAT, 0, skyTexVertices);
-	glDrawArrays(GL_QUADS, 0, 4);
-	
-	glDisable(GL_TEXTURE_2D);
-}
-void drawHouse(void){
-	
-	glEnable(GL_TEXTURE_2D);
-
-	glBindTexture(GL_TEXTURE_2D, buildingTex);
-	glVertexPointer(2, GL_FLOAT, 0, houseVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, houseColors);
-	glTexCoordPointer(2, GL_FLOAT, 0, houseTexVertices);
-	glDrawArrays(GL_QUADS, 0, 4);
-
-	glBindTexture(GL_TEXTURE_2D, roofTex);
-	glVertexPointer(2, GL_FLOAT, 0, roofVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, roofColors);
-	glTexCoordPointer(2, GL_FLOAT, 0, roofTexVertices);
-	glDrawArrays(GL_POLYGON, 0, 4);
-
-	glBindTexture(GL_TEXTURE_2D, windowTex);
-	glVertexPointer(2, GL_FLOAT, 0, windowOneVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
-	glTexCoordPointer(2, GL_FLOAT, 0, windowTexVertices);
-	glDrawArrays(GL_POLYGON, 0, 4);
-	
-	glBindTexture(GL_TEXTURE_2D, windowTex);
-	glVertexPointer(2, GL_FLOAT, 0, windowTwoVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
-	glTexCoordPointer(2, GL_FLOAT, 0, windowTexVertices);
-	glDrawArrays(GL_POLYGON, 0, 4);
-
-	glBindTexture(GL_TEXTURE_2D, windowTex);
-	glVertexPointer(2, GL_FLOAT, 0, windowThreeVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, windowColors);
-	glTexCoordPointer(2, GL_FLOAT, 0, windowTexVertices);
-	glDrawArrays(GL_POLYGON, 0, 4);
-
-	glBindTexture(GL_TEXTURE_2D, doorTex);
-	glVertexPointer(2, GL_FLOAT, 0, doorVertices);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, doorColors);
-	glDrawArrays(GL_POLYGON, 0, 4);
-	
-	glDisable(GL_TEXTURE_2D);
-}
-
-
-void drawTree(void)
+void drawSun(int numOfVertices)
 {
-	//glVertexPointer(2, GL_FLOAT, 0, treeTrunkVertices);
-	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, treeTrunkColors);
-	//glDrawArrays(GL_QUADS, 0, 4);
+	glBegin(GL_TRIANGLE_FAN);
+	glColor3f(255, 255, 0);
+	glVertex2f(0.0f, 0.0f);
+	float radius = 0.25f;
+	float theta = 0.0f;
+	float thetaDelta = (gu_pi * 8.0f) / float(numOfVertices);
+	for (unsigned int i = 0; i <= numOfVertices; i++, theta += thetaDelta)
+	{
+		float x = cosf(theta) * radius;
+		float y = sinf(theta) * radius;
+
+		glVertex2f(x, y);
+	}
+	glEnd();
+}
+
+void drawBug(GLuint bugTexture)
+{
+	glBindTexture(GL_TEXTURE_2D, bugTexture);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glVertex2f(0.1f, 0.1f);
+	glTexCoord2d(0.0f, 0.0f);
+
+	glVertex2f(0.2f, 0.1f);
+	glTexCoord2d(1.0f, 0.0f);
+	
+	glVertex2f(0.2f, 0.2f);
+	glTexCoord2d(1.0f, 1.0f);
+	
+	glVertex2f(0.1f, 0.2f);
+	glTexCoord2d(0.0f, 1.0f);
+
+	glEnd();
+}
+
+void drawSunRotating()
+{
+	glUseProgram(shaderProgramNoTex);
+	GUMatrix4 R = GUMatrix4::translationMatrix(x, y, 0.0f) * GUMatrix4::rotationMatrix(0.0f, 0.0f, sunAngle);
+	glUniformMatrix4fv(locT2, 1, GL_FALSE, (GLfloat*)&R);
+	drawSun(30);
+	glUseProgram(0);
+}
+
+void update(void)
+{
+	sunAngle = sunAngle + 0.01;
+	if (keyUpPressed == true)
+	{
+		bugY += 0.001;
+	}
+	if (keyDownPressed == true)
+	{
+		bugY -= 0.001;
+	}
+	if (keyRightPressed == true)
+	{
+		bugX += 0.001;
+	}
+	if (keyLeftPressed == true)
+	{
+		bugX -= 0.001;
+	}
+	
+	theta += 0.005f;
+	
+	
+	glutPostRedisplay();
 }
 
 void drawBackgroundVBO(void){
@@ -714,4 +719,57 @@ void drawHouseVBO(void){
 	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_BYTE, (GLvoid*)0);
 
 	glDisable(GL_TEXTURE_2D);
+}
+
+void keyDown(unsigned char key, int x, int y)
+{
+	if (key == 'r')
+	{
+		theta = 0.0f;
+		glutPostRedisplay();
+
+	}
+}
+
+void specialKeyDown(int key, int x, int y)
+{
+	switch (key) {
+	case GLUT_KEY_LEFT:
+		keyLeftPressed = true;
+		break;
+
+	case GLUT_KEY_RIGHT:
+		keyRightPressed = true;
+		break;
+
+	case GLUT_KEY_UP:
+		keyUpPressed = true;
+		break;
+
+	case GLUT_KEY_DOWN:
+		keyDownPressed = true;
+		break;
+	}
+}
+
+void specialKeyUp(int key, int x, int y)
+{
+	switch (key) {
+	case GLUT_KEY_LEFT:
+		keyLeftPressed = false;
+		break;
+
+	case GLUT_KEY_RIGHT:
+		keyRightPressed = false;
+		break;
+
+	case GLUT_KEY_UP:
+		keyUpPressed = false;
+		break;
+
+	case GLUT_KEY_DOWN:
+		keyDownPressed = false;
+		break;
+	}
+
 }
