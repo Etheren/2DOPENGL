@@ -29,6 +29,7 @@ GLuint doorTex = 4;
 GLuint windowTex = 5;
 GLuint buildingTex = 6;
 GLuint bugTex = 7;
+GLuint bushTex = 8;
 
 float x = 0.6, y = 0.6;
 float bugX = 0.0f, bugY = 0.0f, bugAngle =-90.0f;
@@ -94,10 +95,10 @@ static GLfloat houseVertices[] = {
 	-0.8f, 0.4f,
 };
 static GLubyte houseColors[] = {
-	51, 25, 0,
-	51, 25, 0,
-	51, 25, 0,
-	51, 25, 0,
+	51, 25, 0, 255,
+	51, 25, 0, 255,
+	51, 25, 0, 255,
+	51, 25, 0, 255
 };
 static GLfloat houseTexVertices[] = {
 	-2.0f, -3.0f,
@@ -115,9 +116,9 @@ static GLfloat roofVertices[] = {
 	-0.9f, 0.4f
 };
 static GLubyte roofColors[] = {
-	255,0,0,
-	255,0,0,
-	255,0,0,
+	255,0,0, 255,
+	255,0,0, 255,
+	255,0,0, 255
 };
 static GLfloat roofTexVertices[] = {
 	0.5f, 1.0f,
@@ -147,10 +148,10 @@ static GLfloat windowThreeVertices[] = {
 	-0.3f, 0.35f,
 };
 static GLubyte windowColors[] = {
-	64,64,64,
-	64,64,64,
-	64,64,64,
-	64,64,64,
+	64,64,64, 255,
+	64,64,64, 255, 
+	64,64,64,255,
+	64,64,64,255
 };
 
 static GLfloat windowTexVertices[] = {
@@ -170,10 +171,10 @@ static GLfloat doorVertices[] = {
 };
 
 static GLubyte doorColors[] = {
-	255, 225, 255,
-	255, 225, 255,
-	255, 225, 255,
-	255, 225, 255
+	255, 225, 255, 255,
+	255, 225, 255, 255,
+	255, 225, 255, 255,
+	255, 225, 255, 255
 };
 static GLfloat doorTexVertices[] = {
 	0.0f, 0.0f,
@@ -191,10 +192,10 @@ static GLfloat pathVertices[] = {
 	-0.3f, -0.8f
 };
 static GLubyte pathColors[] = {
-	255, 178, 102,
-	255, 178, 102,
-	255, 178, 102,
-	255, 178, 102,
+	255, 178, 102, 255,
+	255, 178, 102, 255,
+	255, 178, 102, 255,
+	255, 178, 102, 255
 };
 static GLfloat pathTexVertices[] = {
 	-1.0f, -1.0f,
@@ -204,6 +205,29 @@ static GLfloat pathTexVertices[] = {
 };
 static GLubyte pathVertIndices[] = { 0, 1, 2, 3 };
 GLuint pathVerticesVBO, pathColorVBO, pathTexVerticesVBO, pathVertIndicesVBO;
+
+static GLfloat bushVertices[] = {
+	0.4f, -0.5f,
+	0.7f, -0.5f,
+	0.7f, 0.1f,
+	0.4f, 0.1f
+};
+static GLubyte bushColors[] = {
+	102, 255, 102, 255,
+	102, 255, 102, 255,
+	102, 255, 102, 255,
+	102, 255, 102, 255
+};
+static GLfloat bushTexVertices[] = {
+	1.0f, 1.0f,
+	0.0f, 1.0f,
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	
+	
+};
+static GLubyte bushVertIndices[] = { 0, 1, 2, 3 };
+GLuint bushVerticesVBO, bushColorVBO, bushTexVerticesVBO, bushVertIndicesVBO;
 
 // Function Prototypes
 
@@ -298,6 +322,7 @@ void init(int argc, char* argv[]) {
 	doorTex = fiLoadTexture("..\\Common\\Resources\\Textures\\door.jpg");
 	roofTex = fiLoadTexture("..\\Common\\Resources\\Textures\\roof.jpg");
 	bugTex = fiLoadTexture("..\\Common\\Resources\\Textures\\bug.png");
+	bushTex = fiLoadTexture("..\\Common\\Resources\\Textures\\bush.png");
 
 	//load dem shaders
 	shaderProgram = setupShaders(string("Shaders\\basic_vertex_shader.txt"), string("Shaders\\basic_fragment_shader.txt"));
@@ -370,6 +395,22 @@ void setupBackgroundVBO(void){
 	glGenBuffers(1, &pathVertIndicesVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pathVertIndicesVBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(pathVertIndices), pathVertIndices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &bushVerticesVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, bushVerticesVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(bushVertices), bushVertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &bushColorVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, bushColorVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(bushColors), bushColors, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &bushTexVerticesVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, bushTexVerticesVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(bushTexVertices), bushTexVertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &bushVertIndicesVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bushVertIndicesVBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(bushVertIndices), bushVertIndices, GL_STATIC_DRAW);
 }
 
 void setupHouseVBO(void){
@@ -456,7 +497,6 @@ void display(void) {
 	glLoadIdentity();
 	drawSunRotating();
 	
-	
 	glLoadIdentity();
 	glTranslatef(bugX, bugY, 0.0f);
 	glRotatef(bugAngle, 0.0f, 0.0f, 1.0f);
@@ -465,16 +505,14 @@ void display(void) {
 	drawBug(bugTex);
 	glDisable(GL_BLEND);
 
-
-
 	glutSwapBuffers();
 }
 
 void drawSun(int numOfVertices)
 {
 	glBegin(GL_TRIANGLE_FAN);
-	glColor3f(255, 255, 0);
 	glVertex2f(0.0f, 0.0f);
+	glColor3f(255, 255, 0);
 	float radius = 0.25f;
 	float theta = 0.0f;
 	float thetaDelta = (gu_pi * 8.0f) / float(numOfVertices);
@@ -488,6 +526,16 @@ void drawSun(int numOfVertices)
 	glEnd();
 }
 
+
+void drawSunRotating()
+{
+	glUseProgram(shaderProgramNoTex);
+	GUMatrix4 R = GUMatrix4::translationMatrix(x, y, 0.0f) * GUMatrix4::rotationMatrix(0.0f, 0.0f, sunAngle);
+	glUniformMatrix4fv(locT2, 1, GL_FALSE, (GLfloat*)&R);
+	drawSun(30);
+	glUseProgram(0);
+}
+
 void drawBug(GLuint bugTexture)
 {
 	glBindTexture(GL_TEXTURE_2D, bugTexture);
@@ -499,23 +547,14 @@ void drawBug(GLuint bugTexture)
 
 	glVertex2f(0.2f, 0.1f);
 	glTexCoord2d(1.0f, 0.0f);
-	
+
 	glVertex2f(0.2f, 0.2f);
 	glTexCoord2d(1.0f, 1.0f);
-	
+
 	glVertex2f(0.1f, 0.2f);
 	glTexCoord2d(0.0f, 1.0f);
 
 	glEnd();
-}
-
-void drawSunRotating()
-{
-	glUseProgram(shaderProgramNoTex);
-	GUMatrix4 R = GUMatrix4::translationMatrix(x, y, 0.0f) * GUMatrix4::rotationMatrix(0.0f, 0.0f, sunAngle);
-	glUniformMatrix4fv(locT2, 1, GL_FALSE, (GLfloat*)&R);
-	drawSun(30);
-	glUseProgram(0);
 }
 
 void update(void)
@@ -604,6 +643,24 @@ void drawBackgroundVBO(void){
 	glEnableVertexAttribArray(8);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pathVertIndicesVBO);
+
+	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_BYTE, (GLvoid*)0);
+
+	glBindTexture(GL_TEXTURE_2D, bushTex);
+
+	glBindBuffer(GL_ARRAY_BUFFER, bushVerticesVBO);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
+	glEnableVertexAttribArray(9);
+
+	glBindBuffer(GL_ARRAY_BUFFER, bushColorVBO);
+	glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, (const GLvoid*)0);
+	glEnableVertexAttribArray(10);
+
+	glBindBuffer(GL_ARRAY_BUFFER, bushTexVerticesVBO);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
+	glEnableVertexAttribArray(11);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bushVertIndicesVBO);
 
 	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_BYTE, (GLvoid*)0);
 
