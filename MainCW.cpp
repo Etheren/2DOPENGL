@@ -317,7 +317,7 @@ void init(int argc, char* argv[]) {
 	gravelTex = fiLoadTexture("..\\Common\\Resources\\Textures\\gravel.jpg");
 	buildingTex = fiLoadTexture("..\\Common\\Resources\\Textures\\bricks.jpg");
 	windowTex = fiLoadTexture("..\\Common\\Resources\\Textures\\window.jpg");
-	skyTex = fiLoadTexture("..\\Common\\Resources\\Textures\\sky2.jpg");
+	skyTex = fiLoadTexture("..\\Common\\Resources\\Textures\\sky.jpg");
 	groundTex = fiLoadTexture("..\\Common\\Resources\\Textures\\grass.jpg");
 	doorTex = fiLoadTexture("..\\Common\\Resources\\Textures\\door.jpg");
 	roofTex = fiLoadTexture("..\\Common\\Resources\\Textures\\roof.jpg");
@@ -512,8 +512,7 @@ void drawSun(int numOfVertices)
 {
 	glBegin(GL_TRIANGLE_FAN);
 	glVertex2f(0.0f, 0.0f);
-	glColor3f(255, 255, 0);
-	float radius = 0.25f;
+	float radius = 0.15f;
 	float theta = 0.0f;
 	float thetaDelta = (gu_pi * 8.0f) / float(numOfVertices);
 	for (unsigned int i = 0; i <= numOfVertices; i++, theta += thetaDelta)
@@ -562,19 +561,19 @@ void update(void)
 	sunAngle = sunAngle + 0.01;
 	if (keyUpPressed == true)
 	{
-		bugY += 0.001;
+		bugY += 0.01;
 	}
 	if (keyDownPressed == true)
 	{
-		bugY -= 0.001;
+		bugY -= 0.01;
 	}
 	if (keyRightPressed == true)
 	{
-		bugX += 0.001;
+		bugX += 0.01;
 	}
 	if (keyLeftPressed == true)
 	{
-		bugX -= 0.001;
+		bugX -= 0.01;
 	}
 	
 	theta += 0.005f;
