@@ -11,6 +11,7 @@ using namespace CoreStructures;
 
 static bool codeTest = false;
 
+
 GLuint locT;
 GLuint locT2;
 
@@ -40,7 +41,7 @@ bool keyLeftPressed = false;
 bool keyRightPressed = false;
 
 
-//Ground Arrays, Ground, Sky House, Window, Window Panes, Path,
+//Ground Arrays
 static GLfloat groundVertices[] = {
 	-1.0f, -1.0f,
 	1.0f, -1.0f,
@@ -110,6 +111,7 @@ static GLubyte houseVertIndices[] = { 0, 1, 2, 3 };
 
 GLuint houseVerticesVBO, houseColorVBO, houseTexVerticesVBO, houseVertIndicesVBO;
 
+//Roof arrays
 static GLfloat roofVertices[] = {
 	-0.35f, 0.7f,
 	0.2f, 0.4f,
@@ -163,6 +165,7 @@ static GLfloat windowTexVertices[] = {
 static GLubyte windowVertIndices[] = { 0, 1, 2, 3 };
 GLuint windowOneVerticesVBO, windowTwoVerticesVBO, windowThreeVerticesVBO, windowColorVBO, windowTexVerticesVBO, windowVertIndicesVBO;
 
+//Door arrays
 static GLfloat doorVertices[] = {
 	-0.3f, -0.2f,
 	-0.0f, -0.2f,
@@ -185,6 +188,7 @@ static GLfloat doorTexVertices[] = {
 static GLubyte doorVertIndices[] = { 0, 1, 2, 3 };
 GLuint doorVerticesVBO, doorColorVBO, doorTexVerticesVBO, doorVertIndicesVBO;
 
+//Path arrays
 static GLfloat pathVertices[] = {
 	-0.3f, -1.0f,
 	-0.0f, -1.0f,
@@ -206,6 +210,7 @@ static GLfloat pathTexVertices[] = {
 static GLubyte pathVertIndices[] = { 0, 1, 2, 3 };
 GLuint pathVerticesVBO, pathColorVBO, pathTexVerticesVBO, pathVertIndicesVBO;
 
+//Bush arrays
 static GLfloat bushVertices[] = {
 	0.4f, -0.5f,
 	0.7f, -0.5f,
@@ -333,6 +338,7 @@ void init(int argc, char* argv[]) {
 
 	sunTransformation = glGetUniformLocation(shaderProgramNoTex, "sunTransform");
 
+	//Setup VBOs
 	setupBackgroundVBO();
 	setupHouseVBO();
 }
@@ -347,7 +353,7 @@ void report_version(void) {
 	cout << "OpenGL version " << majorVersion << "." << minorVersion << "\n\n";
 }
 
-void setupBackgroundVBO(void){
+void setupBackgroundVBO(void){ //SO MANY VBO SETUPS, ITS ALMOST UNREAL
 	glGenBuffers(1, &groundVerticesVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, groundVerticesVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(groundVertices), groundVertices, GL_STATIC_DRAW);
@@ -413,7 +419,7 @@ void setupBackgroundVBO(void){
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(bushVertIndices), bushVertIndices, GL_STATIC_DRAW);
 }
 
-void setupHouseVBO(void){
+void setupHouseVBO(void){ //OH NO ITS THE SAME HERE
 	glGenBuffers(1, &houseVerticesVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, houseVerticesVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(houseVertices), houseVertices, GL_STATIC_DRAW);
@@ -500,15 +506,16 @@ void display(void) {
 	glLoadIdentity();
 	glTranslatef(bugX, bugY, 0.0f);
 	glRotatef(bugAngle, 0.0f, 0.0f, 1.0f);
-	glEnable(GL_BLEND);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 	drawBug(bugTex);
 	glDisable(GL_BLEND);
 
 	glutSwapBuffers();
 }
 
-void drawSun(int numOfVertices)
+void drawSun(int numOfVertices) //Draws a sun, which is a "circle"
 {
 	glBegin(GL_TRIANGLE_FAN);
 	glVertex2f(0.0f, 0.0f);
@@ -526,7 +533,7 @@ void drawSun(int numOfVertices)
 }
 
 
-void drawSunRotating()
+void drawSunRotating() //Spin that Sun!
 {
 	glUseProgram(shaderProgramNoTex);
 	GUMatrix4 R = GUMatrix4::translationMatrix(x, y, 0.0f) * GUMatrix4::rotationMatrix(0.0f, 0.0f, sunAngle);
@@ -535,7 +542,7 @@ void drawSunRotating()
 	glUseProgram(0);
 }
 
-void drawBug(GLuint bugTexture)
+void drawBug(GLuint bugTexture) //Bug in Direct Mode Rendering. Gotta make it move.
 {
 	glBindTexture(GL_TEXTURE_2D, bugTexture);
 	glEnable(GL_TEXTURE_2D);
@@ -556,7 +563,7 @@ void drawBug(GLuint bugTexture)
 	glEnd();
 }
 
-void update(void)
+void update(void) //Spin the Sun, and Move the Bug
 {
 	sunAngle = sunAngle + 0.01;
 	if (keyUpPressed == true)
@@ -582,7 +589,7 @@ void update(void)
 	glutPostRedisplay();
 }
 
-void drawBackgroundVBO(void){
+void drawBackgroundVBO(void){ //Draws Sky, Ground, Path and the Bush.
 	glUseProgram(shaderProgram);
 
 	GUMatrix4 T = GUMatrix4::translationMatrix(0.0f, 0.0f, 0.0f);
@@ -666,7 +673,7 @@ void drawBackgroundVBO(void){
 	glDisable(GL_TEXTURE_2D);
 }
 
-void drawHouseVBO(void){
+void drawHouseVBO(void){ //Draws the Building, Roof, the 3 windows and the door
 
 	glUseProgram(shaderProgram);
 
@@ -777,7 +784,7 @@ void drawHouseVBO(void){
 	glDisable(GL_TEXTURE_2D);
 }
 
-void keyDown(unsigned char key, int x, int y)
+void keyDown(unsigned char key, int x, int y) //Something to do about making sure a key is down. do i really need this?
 {
 	if (key == 'r')
 	{
@@ -787,7 +794,7 @@ void keyDown(unsigned char key, int x, int y)
 	}
 }
 
-void specialKeyDown(int key, int x, int y)
+void specialKeyDown(int key, int x, int y) //Check to see if a key is pressed
 {
 	switch (key) {
 	case GLUT_KEY_LEFT:
@@ -808,7 +815,7 @@ void specialKeyDown(int key, int x, int y)
 	}
 }
 
-void specialKeyUp(int key, int x, int y)
+void specialKeyUp(int key, int x, int y)//Check to see if a key is no longer pressed
 {
 	switch (key) {
 	case GLUT_KEY_LEFT:
